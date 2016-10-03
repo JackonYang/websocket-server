@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>WebSocket Demo</title>
+
+  <script>
+
+  var open_websocket = function () {
+      var show_message = function (message) {
+          var el = document.createElement("div");
+          el.innerHTML = message;
+          document.body.appendChild(el);
+      }
+
+        var ws = new WebSocket("ws://"+location.host+"/websocket/{{ channel }}");
+        ws.onopen = function() {
+            show_message("Connected to Channel-" + {{ channel }} + ".");
+        };
+
+        ws.onmessage = function(event) {
+            show_message(event.data);
+        };
+
+        ws.onclose = function() {
+            show_message("Closed Channel-" + {{ channel }} + ".");
+        };
+  }
+
+  </script>
+
+</head>
+
+<body onload="open_websocket()">
+
+  <h1>WebSocket Demo</h1>
+
+  <h2>Channel: {{ channel }}</h2>
+
+  <p>
+    Redis PubSub + Tornado + WebSocket, multi channel support.
+  </p>
+  <p>
+    You may open another browser window and send messages from here.
+  </p>
+
+  <form method="POST" action="/{{ channel }}/new" target="_hidden">
+    <input name="message" style="width: 500px;border: 1px solid #CCC;padding: 3px;" value="" placeholder="Enter your message here and press the 'Send' button."/>
+    <input type="submit" value="Post"/>
+  </form>
+
+  <iframe id="_hidden" style="display:none"></iframe>
+
+  <h2>Messages</h2>
+  <hr/>
+
+</body>
+
+</html>
